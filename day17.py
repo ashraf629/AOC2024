@@ -8,7 +8,7 @@ with open("day17.txt") as file:
 def compile(A,B,C,program):
     out = []
     p = 0
-    while p < len(program)-1 and len(out) <= len(program):
+    while p < len(program)-1:
         if program[p] == 0:#adv
             A = A // 2**[0,1,2,3,A,B,C][program[p+1]]
         elif program[p] == 1:#bxl
