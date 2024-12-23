@@ -53,6 +53,7 @@ for (y,x) in spaces:
     for (u,r) in dirs:
         if (y+u,x+r) in spaces: nodes[(y,x)][0].append((y+u,x+r))
 
+# Dijkstra's with no priority queue
 nodes[(0,0)][1] = 0
 working_nodes = {(0,0)}
 visited = {(0,0)}
@@ -78,32 +79,32 @@ for y in range(71):
         if grid[y][x] == '.': spaces.add((y,x))
 
 #Dijkstra
+import heapq
+import time
+
+startTime = time.time()
 for (a,b) in fallingBytes[1028:]:
     spaces.remove((b,a))
-    nodes = dict()
-    for (y,x) in spaces:
-        nodes[(y,x)] = [[],inf]
-        for (u,r) in dirs:
-            if (y+u,x+r) in spaces: nodes[(y,x)][0].append((y+u,x+r))
-
-    nodes[(0,0)][1] = 0
-    working_nodes = {(0,0)}
-    visited = {(0,0)}
-    while len(working_nodes) > 0:
-        d = inf
-        for node in working_nodes:
-            if nodes[node][1] < d:
-                d = nodes[node][1]
-                next = node
-        for i in range(len(nodes[next][0])):
-            nodes[nodes[next][0][i]][1] = min(nodes[nodes[next][0][i]][1],1 + d)
-            if not nodes[next][0][i] in visited: working_nodes.add(nodes[next][0][i])
-            visited.add(nodes[next][0][i])
-        working_nodes.remove(next)
-    if nodes[(70,70)][1] == inf:
+    distances = {(0,0):0}
+    heap = [(0,(0,0))]
+    heapq.heapify(heap)
+    visited = set()
+    while heap:
+        d,(y,x) = heapq.heappop(heap)
+        if (y,x) in visited: continue
+        visited.add((y,x))
+        for u,r in dirs:
+            if (y+u,x+r) in spaces:
+                if (y+u,x+r) not in distances:
+                    distances[(y+u,x+r)] = d+1
+                    heapq.heappush(heap,(d+1,(y+u,x+r)))
+                if d+1 < distances[(y+u,x+r)]:
+                    heapq.heappush((d+1,(y+u,x+r)))
+                    distances[(y+u,x+r)] = d+1
+    if (70,70) not in distances:
         print(a,b)
+        print(f"time taken with Dijkstra's: {time.time() - startTime}")
         break
-
 
 spaces = set()
 for y in range(71):
@@ -111,6 +112,7 @@ for y in range(71):
         if grid[y][x] == '.': spaces.add((y,x))
 
 #BFS
+startTime = time.time()
 for (a,b) in fallingBytes[1028:]:
     spaces.remove((b,a))
     queue = DLL()
@@ -126,4 +128,5 @@ for (a,b) in fallingBytes[1028:]:
             visited.add((y+u,x+r))
     if (70,70) not in distances:
         print(a,b)
+        print(f"time taken with breadth first search: {time.time() - startTime}")
         break
