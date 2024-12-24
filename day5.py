@@ -57,7 +57,7 @@ for update in updates:
             adj[str(rule[0])].append(rule[1])
     update = topologicalSort(update,adj)
     total += update[len(update)//2]
-
+print(total)
 
 # original version
 
