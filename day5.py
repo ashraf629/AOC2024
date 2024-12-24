@@ -1,6 +1,4 @@
-from copy import copy
-
-with open("c:/Users/ashra/OneDrive/Documents/programming/advent_of_code/day5.txt") as f:
+with open("day5.txt") as f:
     s = f.readline()
     rules = []
     while s != '\n':
@@ -28,6 +26,42 @@ for update in updates:
 print(sum)
 
 # part 2
+# using a DFS-based topological sorting algorithm
+
+def topologicalSortUtil(v,adj,stack,visited):
+    visited.add(v)
+    for w in adj[str(v)]:
+        if w not in visited:
+            topologicalSortUtil(w,adj,stack,visited)
+    stack.append(v)
+
+def topologicalSort(nodes,adj):
+    stack = []
+    visited = set()
+    for node in nodes:
+        if node not in visited:
+            visited.add(node)
+            for v in adj[str(node)]:
+                if v not in visited:
+                    topologicalSortUtil(v,adj,stack,visited)
+            stack.append(node)
+    return stack[::-1]
+
+total = 0
+for update in updates:
+    if check(update,rules):
+        continue
+    adj = {str(x):[] for x in update}
+    for rule in rules:
+        if rule[0] in update and rule[1] in update:
+            adj[str(rule[0])].append(rule[1])
+    update = topologicalSort(update,adj)
+    total += update[len(update)//2]
+
+
+# original version
+
+from copy import copy
 
 def move(x,y,l):# move l[x] into position y
     if x < y:
@@ -60,4 +94,3 @@ for update in updates:
         sum += ucopy[len(update)//2]
 
 print(sum)
-
